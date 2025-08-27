@@ -24,6 +24,11 @@
                         {{ __('Manajemen Tendik') }}
                     </x-nav-link>
                     @endrole
+                    @role('dosen')
+                    <x-nav-link :href="route('dosen.promotion.index')" :active="request()->routeIs('dosen.promotion.*')">
+                        {{ __('Pengajuan Jabatan') }}
+                    </x-nav-link>
+                    @endrole
                 </div>
             </div>
 

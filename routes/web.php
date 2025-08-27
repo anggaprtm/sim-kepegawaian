@@ -5,6 +5,7 @@ use App\Http\Controllers\DosenController;
 use App\Http\Controllers\TendikController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PromotionSubmissionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,6 +25,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::resource('dosen', DosenController::class);
     Route::resource('tendik', TendikController::class);
+});
+
+Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
+    Route::get('pengajuan', [PromotionSubmissionController::class, 'index'])->name('promotion.index');
+    Route::get('pengajuan/buat', [PromotionSubmissionController::class, 'create'])->name('promotion.create');
+    Route::post('pengajuan', [PromotionSubmissionController::class, 'store'])->name('promotion.store');
+    Route::get('pengajuan/{submission}', [PromotionSubmissionController::class, 'show'])->name('promotion.show');
+    Route::post('pengajuan/{submission}/upload', [PromotionSubmissionController::class, 'uploadDocument'])->name('promotion.upload');
 });
 
 require __DIR__.'/auth.php';
