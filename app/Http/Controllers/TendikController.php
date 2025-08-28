@@ -29,7 +29,7 @@ class TendikController extends Controller
     public function store(StoreTendikRequest $request)
     {
         $this->tendikService->storeTendik($request->validated());
-        return redirect()->route('tendik.index')->with('success', 'Data Tendik berhasil ditambahkan.');
+        return redirect()->route('admin.tendik.index')->with('success', 'Data Tendik berhasil ditambahkan.');
     }
 
     public function edit(User $tendik)
@@ -41,12 +41,12 @@ class TendikController extends Controller
     public function update(UpdateTendikRequest $request, User $tendik)
     {
         $this->tendikService->updateTendik($tendik, $request->validated());
-        return redirect()->route('tendik.index')->with('success', 'Data Tendik berhasil diperbarui.');
+        return redirect()->route('admin.tendik.index')->with('success', 'Data Tendik berhasil diperbarui.');
     }
 
     public function destroy(User $tendik)
     {
         $this->tendikService->deleteTendik($tendik);
-        return redirect()->route('tendik.index')->with('success', 'Data Tendik berhasil dihapus.');
+        return redirect()->route('admin.tendik.index')->with('success', 'Data Tendik berhasil dihapus.');
     }
 }
