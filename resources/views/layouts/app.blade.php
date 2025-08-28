@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-g">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -15,8 +15,9 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            <div x-data="{ open: false }" class="flex">
+        <div class="bg-gray-100">
+            {{-- Perubahan di baris ini: Pindahkan min-h-screen dan tambahkan bg-gray-100 --}}
+            <div x-data="{ open: false }" class="flex min-h-screen bg-gray-100">
                 <!-- Sidebar -->
                 @include('layouts.sidebar')
 
