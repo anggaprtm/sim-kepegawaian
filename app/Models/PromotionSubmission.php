@@ -53,5 +53,9 @@ class PromotionSubmission extends Model
     public function bpfSession() {
         return $this->belongsToMany(BpfSession::class, 'bpf_session_submissions', 'submission_id', 'bpf_session_id');
     }
-
+    
+    public function logs()
+    {
+        return $this->hasMany(SubmissionLog::class, 'submission_id')->latest();
+    }
 }
