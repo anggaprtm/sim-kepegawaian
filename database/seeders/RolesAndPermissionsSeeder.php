@@ -20,6 +20,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Role::create(['name' => 'superadmin']);
         Role::create(['name' => 'dosen']);
         Role::create(['name' => 'tendik']);
+        Role::create(['name' => 'asesor']);
 
         // Contoh pembuatan permission (opsional untuk sekarang, tapi bagus untuk masa depan)
         // Permission::create(['name' => 'manage users']);
