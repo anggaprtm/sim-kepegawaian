@@ -23,6 +23,20 @@ return [
             'Bukti Publikasi Ilmiah (Jurnal Nasional Terakreditasi)',
             'Sertifikat Pendidik',
         ],
+        'Lektor Kepala' => [
+            'SK Jabatan Fungsional Terakhir (Asisten Ahli)',
+            'Ijazah S3 (jika ada)',
+            'Laporan Kinerja Dosen',
+            'Bukti Publikasi Ilmiah (Jurnal Nasional Terakreditasi)',
+            'Sertifikat Pendidik',
+        ],
+        'Guru Besar' => [
+            'SK Jabatan Fungsional Terakhir (Asisten Ahli)',
+            'Ijazah S3 (jika ada)',
+            'Laporan Kinerja Dosen',
+            'Bukti Publikasi Ilmiah (Jurnal Nasional Terakreditasi)',
+            'Sertifikat Pendidik',
+        ],
         // Tambahkan persyaratan untuk Lektor Kepala dan Guru Besar
     ],
 ];

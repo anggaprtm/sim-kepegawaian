@@ -52,8 +52,23 @@
                     </ul>
 
                     <div class="mt-6 border-t pt-4">
-                        <x-primary-button disabled>Ajukan Verifikasi</x-primary-button>
-                        <p class="text-sm text-gray-500 mt-2">Tombol "Ajukan Verifikasi" akan aktif jika semua dokumen persyaratan sudah lengkap diunggah.</p>
+                        @if($submission->areDocumentsComplete() && $submission->status == 'pengajuan_dibuat')
+                            <form action="{{ route('dosen.promotion.submit', $submission->id) }}" method="POST">
+                                @csrf
+                                <x-primary-button>
+                                    Ajukan Verifikasi
+                                </x-primary-button>
+                            </form>
+                        @else
+                            <x-primary-button disabled>Ajukan Verifikasi</x-primary-button>
+                            <p class="text-sm text-gray-500 mt-2">
+                                @if($submission->status != 'pengajuan_dibuat')
+                                    Pengajuan sudah dalam proses verifikasi atau tahap selanjutnya.
+                                @else
+                                    Tombol "Ajukan Verifikasi" akan aktif jika semua dokumen persyaratan sudah lengkap diunggah.
+                                @endif
+                            </p>
+                        @endif
                     </div>
                 </div>
             </div>

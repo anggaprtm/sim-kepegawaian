@@ -87,4 +87,20 @@ class PromotionSubmissionController extends Controller
 
         return back()->with('success', 'Dokumen ' . $request->document_name . ' berhasil diunggah.');
     }
+
+    public function submitForVerification(PromotionSubmission $submission)
+    {
+        abort_if($submission->dosen_user_id !== Auth::id(), 403);
+
+        // Pastikan dokumen lengkap sebelum submit
+        if (!$submission->areDocumentsComplete()) {
+            return back()->with('error', 'Semua dokumen persyaratan harus diunggah sebelum mengajukan verifikasi.');
+        }
+
+        $submission->update(['status' => 'diajukan_verifikasi']);
+
+        // Di sini kita bisa menambahkan log ke tabel submission_logs jika sudah dibuat
+
+        return redirect()->route('dosen.promotion.index')->with('success', 'Pengajuan berhasil dikirim untuk diverifikasi.');
+    }
 }
