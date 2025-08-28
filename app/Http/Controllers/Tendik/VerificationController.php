@@ -41,7 +41,7 @@ class VerificationController extends Controller
                 'catatan_revisi' => null, // Hapus catatan revisi jika ada
             ]);
             // Tambah log di sini
-            return redirect()->route('tendik.verification.index')->with('success', 'Pengajuan berhasil disetujui.');
+            return redirect()->route('tendik.promotion.index')->with('success', 'Pengajuan berhasil disetujui.');
         }
 
         if ($request->action == 'revise') {

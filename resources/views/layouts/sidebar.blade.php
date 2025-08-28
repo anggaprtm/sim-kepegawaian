@@ -43,7 +43,7 @@
                     </svg>
                 </button>
                 <div x-show="open" class="pl-4">
-                    <x-nav-link :href="route('tendik.verification.index')" :active="request()->routeIs('tendik.verification.*')">
+                    <x-nav-link :href="route('tendik.promotion.index')" :active="request()->routeIs('tendik.promotion.*')">
                         {{ __('Daftar Pengajuan') }}
                     </x-nav-link>
                     <x-nav-link :href="route('tendik.pak_session.index')" :active="request()->routeIs('tendik.pak_session.*')">

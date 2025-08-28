@@ -62,7 +62,7 @@ class PromotionSubmissionController extends Controller
         abort_if($submission->dosen_user_id !== Auth::id(), 403);
 
         $requirements = config('promotion.requirements.' . $submission->jabatan_fungsional_tujuan, []);
-        $submission->load('documents');
+        $submission->load('documents', 'logs.processor');
 
         return view('dosen.promotion.show', compact('submission', 'requirements'));
     }

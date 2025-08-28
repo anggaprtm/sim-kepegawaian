@@ -11,6 +11,7 @@ use App\Http\Controllers\Tendik\AssessorAssignmentController;
 use App\Http\Controllers\Tendik\PakSessionController;
 use App\Http\Controllers\Tendik\BpfSessionController;
 use App\Http\Controllers\Tendik\FinalizationController;
+use App\Http\Controllers\Tendik\PromotionModuleController;
 
 
 Route::get('/', function () {
@@ -39,25 +40,30 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
     Route::post('pengajuan/{submission}/submit', [PromotionSubmissionController::class, 'submitForVerification'])->name('promotion.submit');
 });
 
-// Rute Tendik (Spesifik) - Ditempatkan SEBELUM Superadmin
 Route::middleware(['auth', 'role:tendik'])->prefix('tendik')->name('tendik.')->group(function () {
-    Route::get('verifikasi', [VerificationController::class, 'index'])->name('verification.index');
-    Route::get('verifikasi/{submission}', [VerificationController::class, 'show'])->name('verification.show');
+    // Rute utama modul kenaikan pangkat
+    Route::get('kenaikan-pangkat', [PromotionModuleController::class, 'index'])->name('promotion.index');
+    Route::get('kenaikan-pangkat/{submission}', [PromotionModuleController::class, 'show'])->name('promotion.show');
+
+    // Rute untuk proses (masih menggunakan controller lama untuk sementara)
     Route::post('verifikasi/{submission}/process', [VerificationController::class, 'process'])->name('verification.process');
-    Route::get('penilaian-asesor', [AssessorAssignmentController::class, 'index'])->name('assessor.index');
-    Route::get('penilaian-asesor/{submission}', [AssessorAssignmentController::class, 'show'])->name('assessor.show');
     Route::post('penilaian-asesor/{submission}', [AssessorAssignmentController::class, 'store'])->name('assessor.store');
     Route::get('penilaian-asesor/{submission}/surat-tugas', [AssessorAssignmentController::class, 'generateAssignmentLetter'])->name('assessor.letter');
+
+    // Rute untuk sidang dan finalisasi (tetap terpisah karena merupakan halaman tersendiri)
     Route::resource('sidang-pak', PakSessionController::class)->names('pak_session');
-    Route::post('sidang-pak/{pak_session}/process', [PakSessionController::class, 'processResults'])->name('pak_session.process');
-    Route::get('sidang-pak/{pak_session}/undangan', [PakSessionController::class, 'generateInvitation'])->name('pak_session.invitation');
+    Route::post('sidang-pak/{sidang_pak}/process', [PakSessionController::class, 'processResults'])->name('pak_session.process');
+    Route::get('sidang-pak/{sidang_pak}/undangan', [PakSessionController::class, 'generateInvitation'])->name('pak_session.invitation');
+    
     Route::resource('sidang-bpf', BpfSessionController::class)->names('bpf_session');
-    Route::post('sidang-bpf/{bpf_session}/process', [BpfSessionController::class, 'processResults'])->name('bpf_session.process');
-    Route::get('sidang-bpf/{bpf_session}/undangan', [BpfSessionController::class, 'generateInvitation'])->name('bpf_session.invitation');
+    Route::post('sidang-bpf/{sidang_bpf}/process', [BpfSessionController::class, 'processResults'])->name('bpf_session.process');
+    Route::get('sidang-bpf/{sidang_bpf}/undangan', [BpfSessionController::class, 'generateInvitation'])->name('bpf_session.invitation');
+    
     Route::get('finalisasi', [FinalizationController::class, 'index'])->name('finalization.index');
     Route::post('finalisasi/generate-letter', [FinalizationController::class, 'generateUniversityCoverLetter'])->name('finalization.generate_letter');
     Route::post('finalisasi/{submission}/process', [FinalizationController::class, 'processFinalResult'])->name('finalization.process');
 });
+
 
 // Rute Superadmin (Umum) - Ditempatkan PALING AKHIR
 Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('admin.')->group(function () {

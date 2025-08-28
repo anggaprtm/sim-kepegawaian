@@ -28,7 +28,8 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Pengajuan</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jabatan Tujuan</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status & Aksi</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status Terkini</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -37,32 +38,29 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $submission->created_at->format('d M Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $submission->jabatan_fungsional_tujuan }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                @if(Str::contains($submission->status, 'gagal') || Str::contains($submission->status, 'revisi')) bg-red-100 text-red-800
-                                                @elseif(Str::contains($submission->status, 'sk_terbit')) bg-green-100 text-green-800
-                                                @else bg-blue-100 text-blue-800 @endif">
-                                                {{ Str::title(str_replace('_', ' ', $submission->status)) }}
-                                            </span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            @if(Str::contains($submission->status, 'gagal') || Str::contains($submission->status, 'revisi')) bg-red-100 text-red-800
+                                            @elseif(Str::contains($submission->status, 'sk_terbit')) bg-green-100 text-green-800
+                                            @else bg-blue-100 text-blue-800 @endif">
+                                            {{ Str::title(str_replace('_', ' ', $submission->status)) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        {{-- Tombol Lihat Detail selalu ada --}}
+                                        <a href="{{ route('dosen.promotion.show', $submission->id) }}" class="text-indigo-600 hover:text-indigo-900 underline mr-3">
+                                            Lihat Detail
+                                        </a>
 
-                                            @if ($submission->status == 'sk_terbit' && $submission->sk_file_path)
-                                                <a href="{{ asset('storage/' . $submission->sk_file_path) }}" target="_blank" class="text-sm text-green-600 hover:text-green-900 underline">
-                                                    Unduh SK
-                                                </a>
-                                            @elseif ($submission->status == 'pengajuan_dibuat' || $submission->status == 'revisi_berkas')
-                                                <a href="{{ route('dosen.promotion.show', $submission->id) }}" class="text-sm text-indigo-600 hover:text-indigo-900 underline">
-                                                    Lengkapi Berkas
-                                                </a>
-                                            @endif
-                                        </div>
-                                        @if($submission->status == 'revisi_berkas' && $submission->catatan_revisi)
-                                            <p class="text-xs text-gray-500 mt-1"><strong>Catatan:</strong> {{ $submission->catatan_revisi }}</p>
+                                        @if ($submission->status == 'sk_terbit' && $submission->sk_file_path)
+                                            <a href="{{ asset('storage/' . $submission->sk_file_path) }}" target="_blank" class="text-green-600 hover:text-green-900 underline">
+                                                Unduh SK
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
                                         Anda belum memiliki riwayat pengajuan.
                                     </td>
                                 </tr>
