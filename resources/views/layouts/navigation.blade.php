@@ -17,10 +17,10 @@
                     </x-nav-link>
 
                     @role('superadmin')
-                    <x-nav-link :href="route('dosen.index')" :active="request()->routeIs('dosen.*')">
+                    <x-nav-link :href="route('admin.dosen.index')" :active="request()->routeIs('dosen.*')">
                         {{ __('Manajemen Dosen') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('tendik.index')" :active="request()->routeIs('tendik.*')">
+                    <x-nav-link :href="route('admin.tendik.index')" :active="request()->routeIs('tendik.*')">
                         {{ __('Manajemen Tendik') }}
                     </x-nav-link>
                     @endrole
@@ -29,6 +29,24 @@
                         {{ __('Pengajuan Jabatan') }}
                     </x-nav-link>
                     @endrole
+                    @role('tendik')
+                    <x-nav-link :href="route('tendik.verification.index')" :active="request()->routeIs('tendik.verification.*')">
+                        {{ __('Verifikasi Pengajuan') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('tendik.assessor.index')" :active="request()->routeIs('tendik.assessor.*')">
+                        {{ __('Penugasan Asesor') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('tendik.pak_session.index')" :active="request()->routeIs('tendik.pak_session.*')">
+                        {{ __('Sidang PAK') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('tendik.bpf_session.index')" :active="request()->routeIs('tendik.bpf_session.*')">
+                        {{ __('Sidang BPF') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('tendik.finalization.index')" :active="request()->routeIs('tendik.finalization.*')">
+                        {{ __('Finalisasi & SK') }}
+                    </x-nav-link>
+                    @endrole
+
                 </div>
             </div>
 
