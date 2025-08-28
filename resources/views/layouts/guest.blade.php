@@ -16,14 +16,20 @@
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+            <div class="w-full sm:max-w-4xl mt-6 bg-white shadow-md overflow-hidden sm:rounded-lg grid grid-cols-1 md:grid-cols-2">
+                <!-- Kolom Branding -->
+                <div class="hidden md:flex flex-col items-center justify-center p-12 bg-gray-800 text-white text-center">
+                    <a href="/">
+                        <x-application-logo class="w-20 h-20 fill-current" />
+                    </a>
+                    <h1 class="text-2xl font-bold mt-4">Sistem Informasi Kepegawaian</h1>
+                    <p class="mt-2 text-gray-300">Selamat datang kembali! Silakan masuk untuk melanjutkan.</p>
+                </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+                <!-- Kolom Form -->
+                <div class="px-6 py-12">
+                    {{ $slot }}
+                </div>
             </div>
         </div>
     </body>
