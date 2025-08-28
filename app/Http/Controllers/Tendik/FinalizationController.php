@@ -49,10 +49,21 @@ class FinalizationController extends Controller
 
         if ($request->result == 'lulus') {
             $path = $request->file('sk_file')->store("sk_files/{$submission->id}", 'public');
+            
+            // Update status pengajuan
             $submission->update([
                 'status' => 'sk_terbit',
                 'sk_file_path' => $path,
             ]);
+
+            // =================================================================
+            // PERBAIKAN LOGIKA ADA DI SINI
+            // Secara otomatis update jabatan fungsional dosen di profilnya.
+            // =================================================================
+            $submission->dosen->dosenDetail()->update([
+                'jabatan_fungsional_saat_ini' => $submission->jabatan_fungsional_tujuan
+            ]);
+
         } else {
             $submission->update([
                 'status' => 'gagal_di_universitas',

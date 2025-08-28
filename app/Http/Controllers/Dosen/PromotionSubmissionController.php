@@ -32,9 +32,20 @@ class PromotionSubmissionController extends Controller
             }
         }
 
-        // Cek apakah ada pengajuan yang masih aktif
+        // =================================================================
+        // PERBAIKAN LOGIKA ADA DI SINI
+        // =================================================================
+        // Definisikan semua status di mana proses dianggap sudah berakhir.
+        $finalStatuses = [
+            'sk_terbit',
+            'gagal_sidang_pak',
+            'gagal_sidang_bpf',
+            'gagal_di_universitas',
+        ];
+
+        // Cek apakah ada pengajuan yang statusnya BUKAN salah satu dari status akhir.
         $activeSubmission = PromotionSubmission::where('dosen_user_id', Auth::id())
-            ->whereNotIn('status', ['selesai', 'ditolak_permanen'])
+            ->whereNotIn('status', $finalStatuses)
             ->exists();
 
         return view('dosen.promotion.create', compact('currentJabatan', 'nextJabatan', 'activeSubmission'));
@@ -62,6 +73,8 @@ class PromotionSubmissionController extends Controller
         abort_if($submission->dosen_user_id !== Auth::id(), 403);
 
         $requirements = config('promotion.requirements.' . $submission->jabatan_fungsional_tujuan, []);
+        
+        // Tambahkan 'logs.processor' untuk memuat data riwayat
         $submission->load('documents', 'logs.processor');
 
         return view('dosen.promotion.show', compact('submission', 'requirements'));
@@ -98,8 +111,6 @@ class PromotionSubmissionController extends Controller
         }
 
         $submission->update(['status' => 'diajukan_verifikasi']);
-
-        // Di sini kita bisa menambahkan log ke tabel submission_logs jika sudah dibuat
 
         return redirect()->route('dosen.promotion.index')->with('success', 'Pengajuan berhasil dikirim untuk diverifikasi.');
     }

@@ -45,12 +45,14 @@ class BpfSessionController extends Controller
         return redirect()->route('tendik.bpf_session.show', $session)->with('success', 'Sidang BPF berhasil dijadwalkan.');
     }
 
-    public function show(BpfSession $bpf_session) {
-        $bpf_session->load('submissions.dosen');
-        return view('tendik.bpf_session.show', ['session' => $bpf_session]);
+    public function show(BpfSession $sidang_bpf) // <-- UBAH DI SINI
+    {
+        $sidang_bpf->load('submissions.dosen');
+        return view('tendik.bpf_session.show', ['session' => $sidang_bpf]);
     }
 
-    public function processResults(Request $request, BpfSession $bpf_session) {
+    public function processResults(Request $request, BpfSession $sidang_bpf) // <-- UBAH DI SINI
+    {
         $request->validate([
             'results' => 'required|array',
             'results.*' => 'in:lulus,tidak_lulus',
@@ -58,27 +60,23 @@ class BpfSessionController extends Controller
         ]);
 
         foreach ($request->results as $submissionId => $result) {
-            $newStatus = ($result == 'lulus') ? 'lulus_sidang_bpf' : 'gagal_sidang_bpf'; // <-- Perubahan di sini
+            $newStatus = ($result == 'lulus') ? 'lulus_sidang_bpf' : 'gagal_sidang_bpf';
             PromotionSubmission::find($submissionId)->update(['status' => $newStatus]);
         }
 
-        $bpf_session->update([
+        $sidang_bpf->update([ // <-- UBAH DI SINI
             'notula' => $request->notula,
             'status' => 'selesai'
         ]);
 
         return redirect()->route('tendik.bpf_session.index')->with('success', 'Hasil Sidang BPF berhasil disimpan.');
     }
-    
-    public function generateInvitation(BpfSession $sidang_bpf)
+
+    public function generateInvitation(BpfSession $sidang_bpf) // <-- UBAH DI SINI
     {
-        // pastikan relasi submissions & dosen di-load
         $sidang_bpf->load('submissions.dosen');
-
-        $pdf = Pdf::loadView('pdf.undangan_bpf', [
-            'session' => $sidang_bpf
-        ]);
-
+        $pdf = Pdf::loadView('pdf.undangan_bpf', ['session' => $sidang_bpf]);
         return $pdf->download('undangan-sidang-bpf-'.Str::slug($sidang_bpf->nama_sesi).'.pdf');
     }
+    
 }
