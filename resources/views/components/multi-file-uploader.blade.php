@@ -1,4 +1,4 @@
-@props(['requirement', 'submission', 'uploadedDocuments' => []])
+@props(['requirement', 'submission', 'uploadedDocuments' => [], 'isLocked' => false])
 
 <div x-data="{
     stagedFiles: [],
@@ -55,16 +55,26 @@
         @endif
     </h4>
     
+    <!-- Daftar File yang Sudah Terunggah -->
     <div x-show="uploadedFiles.length > 0" class="mt-2 space-y-2">
         <template x-for="(file, index) in uploadedFiles" :key="file.id">
             <div class="flex items-center justify-between bg-gray-50 p-2 rounded-md">
-                <a :href="file.url" target="_blank" class="text-sm text-blue-600 hover:underline truncate"><i class="fa-solid fa-file-pdf mr-2"></i><span x-text="file.name"></span></a>
-                <button @click="deleteFile(file.id, index)" class="text-red-500 hover:text-red-700 ml-4">&times;</button>
+                <a :href="file.url" target="_blank" class="text-sm text-blue-600 hover:underline truncate">
+                    <i class="fa-solid fa-file-pdf mr-2"></i><span x-text="file.name"></span>
+                </a>
+                {{-- Tombol hapus hanya muncul jika tidak terkunci --}}
+                <button x-show="!{{ $isLocked ? 'true' : 'false' }}" @click="deleteFile(file.id, index)" class="text-red-500 hover:text-red-700 ml-4">&times;</button>
             </div>
         </template>
     </div>
+    <div x-show="uploadedFiles.length === 0 && {{ $isLocked ? 'true' : 'false' }}" class="mt-2">
+        <p class="text-sm text-gray-500">Belum ada file yang diunggah.</p>
+    </div>
 
+    <!-- Dropzone dan Uploader (hanya muncul jika tidak terkunci) -->
+    @if(!$isLocked)
     <div x-show="allowMultiple || uploadedFiles.length === 0">
+        <!-- Dropzone -->
         <div @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false" @drop.prevent="isDragging = false; handleFiles($event.dataTransfer.files)"
              class="mt-2 border-2 border-dashed rounded-lg p-6 text-center transition-colors"
              :class="{'border-indigo-500 bg-indigo-50': isDragging, 'border-gray-300': !isDragging}">
@@ -72,6 +82,7 @@
             <input type="file" :id="'file-{{ $requirement->id }}'" @change="handleFiles($event.target.files)" class="hidden" accept=".pdf" :multiple="allowMultiple">
         </div>
 
+        <!-- Daftar File Siap Unggah (Staged) -->
         <div x-show="stagedFiles.length > 0" class="mt-2 space-y-2">
             <template x-for="(file, index) in stagedFiles" :key="index">
                 <div class="flex items-center justify-between bg-blue-50 p-2 rounded-md">
@@ -81,6 +92,7 @@
             </template>
         </div>
 
+        <!-- Progress Bar & Tombol Unggah -->
         <div x-show="stagedFiles.length > 0" class="mt-4">
             <div x-show="uploading" class="w-full bg-gray-200 rounded-full h-2.5 mb-2"><div class="bg-indigo-600 h-2.5 rounded-full" :style="`width: ${progress}%`"></div></div>
             <button @click="uploadAll()" :disabled="uploading" class="w-full px-4 py-2 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-300">
@@ -88,4 +100,5 @@
             </button>
         </div>
     </div>
+    @endif
 </div>
