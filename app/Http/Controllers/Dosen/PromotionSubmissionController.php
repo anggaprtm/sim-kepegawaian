@@ -123,14 +123,25 @@ class PromotionSubmissionController extends Controller
     }
 
 
-    public function submitForVerification(PromotionSubmission $submission)
+    public function submitForVerification(Request $request, PromotionSubmission $submission)
     {
         abort_if($submission->dosen_user_id !== Auth::id(), 403);
+        
+        // Pastikan dokumen lengkap sebelum diajukan
         if (!$submission->areDocumentsComplete()) {
-            return back()->with('error', 'Semua dokumen persyaratan harus diunggah sebelum mengajukan verifikasi.');
+            return back()->with('error', 'Harap lengkapi semua dokumen wajib sebelum mengajukan.');
         }
-        $submission->update(['status' => 'diajukan_verifikasi']);
-        return redirect()->route('dosen.promotion.index')->with('success', 'Pengajuan berhasil dikirim untuk diverifikasi.');
+
+        // =================================================================
+        // PERBAIKAN LOGIKA ADA DI SINI
+        // Saat mengajukan ulang, kosongkan catatan revisi sebelumnya.
+        // =================================================================
+        $submission->update([
+            'status' => 'diajukan_verifikasi',
+            'catatan_revisi' => null 
+        ]);
+
+        return redirect()->route('dosen.promotion.index')->with('success', 'Berkas berhasil dikumpulkan dan diajukan untuk verifikasi.');
     }
 
     public function checkStatus(PromotionSubmission $submission)

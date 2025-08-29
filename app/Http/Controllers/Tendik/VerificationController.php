@@ -38,10 +38,10 @@ class VerificationController extends Controller
         if ($request->action == 'approve') {
             $submission->update([
                 'status' => 'berkas_disetujui',
-                'catatan_revisi' => null, // Hapus catatan revisi jika ada
+                'catatan_revisi' => null,
             ]);
-            // Tambah log di sini
-            return redirect()->route('tendik.promotion.index')->with('success', 'Pengajuan berhasil disetujui.');
+            // Redirect ke halaman detail pengajuan yang baru saja diproses
+            return redirect()->route('tendik.promotion.show', $submission->id)->with('success', 'Pengajuan berhasil disetujui.');
         }
 
         if ($request->action == 'revise') {
@@ -49,8 +49,8 @@ class VerificationController extends Controller
                 'status' => 'revisi_berkas',
                 'catatan_revisi' => $request->catatan_revisi,
             ]);
-            // Tambah log di sini
-            return redirect()->route('tendik.verification.index')->with('success', 'Pengajuan dikembalikan untuk revisi.');
+            // Redirect ke halaman detail pengajuan yang baru saja diproses
+            return redirect()->route('tendik.promotion.show', $submission->id)->with('success', 'Pengajuan dikembalikan untuk revisi.');
         }
 
         return back()->with('error', 'Aksi tidak valid.');
