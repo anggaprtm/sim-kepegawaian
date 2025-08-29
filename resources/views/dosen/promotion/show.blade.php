@@ -9,23 +9,20 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"
              x-data="{
                 // Inisialisasi daftar ID persyaratan yang sudah diunggah
-                uploadedRequirementIds: {{ json_encode($submission->documents->pluck('promotion_requirement_id')->unique()->toArray()) }},
+                uploadedRequirementIds: {{ json_encode($documentsByRequirement->keys()) }},
                 
                 // Konversi data persyaratan dari PHP ke array JavaScript
                 requirements: {{ json_encode($requirements) }},
                 
-                // Hitung ID persyaratan wajib
                 get mandatoryRequirementIds() {
                     return this.requirements.filter(req => req.is_wajib).map(req => req.id);
                 },
                 
-                // Cek kelengkapan HANYA berdasarkan yang wajib
                 get isComplete() {
                     if (this.mandatoryRequirementIds.length === 0) return true;
                     return this.mandatoryRequirementIds.every(reqId => this.uploadedRequirementIds.includes(reqId));
                 },
 
-                // Fungsi untuk menangani event saat dokumen diunggah atau dihapus
                 handleDocumentChange(event) {
                     const { requirementId, status, remaining } = event.detail;
                     if (status === 'uploaded' && !this.uploadedRequirementIds.includes(requirementId)) {
@@ -39,7 +36,7 @@
             
             @include('dosen.promotion.partials.stepper')
 
-            <!-- Card Checklist Dikembalikan -->
+            <!-- Card Checklist Persyaratan -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Ringkasan Checklist Persyaratan</h3>
@@ -66,7 +63,11 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Unggah Dokumen Persyaratan</h3>
                     <div class="space-y-4">
                         @foreach($requirements as $req)
-                            <x-multi-file-uploader :requirement="$req" :submission="$submission" :uploadedDocuments="$submission->documents->where('promotion_requirement_id', $req->id)" />
+                            @php
+                                // Ambil dokumen dari koleksi yang sudah dikelompokkan
+                                $uploadedDocs = $documentsByRequirement->get($req->id, collect());
+                            @endphp
+                            <x-multi-file-uploader :requirement="$req" :submission="$submission" :uploadedDocuments="$uploadedDocs" />
                         @endforeach
                     </div>
 
