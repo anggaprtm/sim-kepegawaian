@@ -17,11 +17,11 @@ return [
             'Bukti Publikasi Ilmiah',
         ],
         'Lektor' => [
-            'SK Jabatan Fungsional Terakhir (Asisten Ahli)',
-            'Ijazah S3 (jika ada)',
-            'Laporan Kinerja Dosen',
-            'Bukti Publikasi Ilmiah (Jurnal Nasional Terakreditasi)',
-            'Sertifikat Pendidik',
+            '1. SK Jabatan Fungsional Terakhir (Asisten Ahli)',
+            '2. Ijazah S3 (jika ada)',
+            '3. Laporan Kinerja Dosen',
+            '4. Bukti Publikasi Ilmiah (Jurnal Nasional Terakreditasi)',
+            '5. Sertifikat Pendidik',
         ],
         'Lektor Kepala' => [
             'SK Jabatan Fungsional Terakhir (Asisten Ahli)',

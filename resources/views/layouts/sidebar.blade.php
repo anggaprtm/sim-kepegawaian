@@ -36,6 +36,10 @@
                 <x-slot name="icon"><i class="fa-solid fa-user-gear fa-fw fa-lg"></i></x-slot>
                 <span x-show="!isSidebarMinimized" class="mx-3">Manajemen Tendik</span>
             </x-nav-link>
+            <x-nav-link :href="route('admin.requirements.index')" :active="request()->routeIs('admin.requirements.*')">
+                <x-slot name="icon"><i class="fa-solid fa-check-to-slot fa-fw fa-lg"></i></x-slot>
+                <span x-show="!isSidebarMinimized" class="mx-3">Manajemen Syarat</span>
+            </x-nav-link>
         @endrole
 
         <!-- Menu Dosen -->
