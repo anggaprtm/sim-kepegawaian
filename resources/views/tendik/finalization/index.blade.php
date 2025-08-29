@@ -18,7 +18,7 @@
                             @forelse($forUniversity as $submission)
                             <label class="flex items-center p-3 border-b">
                                 <input type="checkbox" name="submission_ids[]" value="{{ $submission->id }}" class="rounded">
-                                <span class="ml-3">{{ $submission->dosen->name }} (Tujuan: {{ $submission->jabatan_fungsional_tujuan }})</span>
+                                <span class="ml-3">{{ $submission->dosen->name }} (Usulan: {{ $submission->jabatan_fungsional_tujuan }})</span>
                             </label>
                             @empty
                             <p class="p-3 text-gray-500">Tidak ada pengajuan yang siap diajukan ke Universitas.</p>

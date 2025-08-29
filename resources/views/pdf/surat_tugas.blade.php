@@ -39,7 +39,7 @@
         <p>Untuk melakukan penilaian angka kredit atas nama:</p>
         <p><strong>Nama:</strong> {{ $submission->dosen->name }}</p>
         <p><strong>NIP:</strong> {{ $submission->dosen->nip }}</p>
-        <p><strong>Jabatan Tujuan:</strong> {{ $submission->jabatan_fungsional_tujuan }}</p>
+        <p><strong>Jabatan Usulan:</strong> {{ $submission->jabatan_fungsional_tujuan }}</p>
 
         <p>Penilaian dilaksanakan pada tanggal 
         <strong>{{ \Carbon\Carbon::parse($submission->assessors->first()->pivot->start_date)->format('d M Y') }}</strong> 
