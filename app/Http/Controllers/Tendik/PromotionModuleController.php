@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\PromotionSubmission;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\PromotionRequirement; // <-- Import model
 
 class PromotionModuleController extends Controller
 {
-    /**
-     * Menampilkan halaman utama dengan daftar semua pengajuan.
-     */
     public function index()
     {
         $submissions = PromotionSubmission::with('dosen.dosenDetail')
@@ -21,20 +19,18 @@ class PromotionModuleController extends Controller
         return view('tendik.promotion_module.index', compact('submissions'));
     }
 
-    /**
-     * Menampilkan halaman detail untuk satu pengajuan.
-     * Halaman ini akan secara dinamis menampilkan form proses yang sesuai dengan status pengajuan saat ini.
-     */
     public function show(PromotionSubmission $submission)
     {
-        $submission->load('dosen.dosenDetail', 'documents', 'assessors', 'logs.processor');
+        // Ambil persyaratan dari database
+        $requirements = PromotionRequirement::where('jabatan_fungsional', $submission->jabatan_fungsional_tujuan)->get();
         
-        // Data untuk form pemilihan asesor
+        // Kelompokkan dokumen yang ada berdasarkan ID persyaratannya
+        $documentsByRequirement = $submission->documents->groupBy('promotion_requirement_id');
+        
+        // Muat data lain yang diperlukan
+        $submission->load('dosen.dosenDetail', 'assessors');
         $assessors = User::role('asesor')->where('id', '!=', $submission->dosen_user_id)->get();
         
-        // Data persyaratan dokumen
-        $requirements = config('promotion.requirements.' . $submission->jabatan_fungsional_tujuan, []);
-
-        return view('tendik.promotion_module.show', compact('submission', 'assessors', 'requirements'));
+        return view('tendik.promotion_module.show', compact('submission', 'assessors', 'requirements', 'documentsByRequirement'));
     }
 }
