@@ -32,11 +32,21 @@ class PromotionSubmission extends Model
 
     public function areDocumentsComplete(): bool
     {
-        $requiredDocs = collect(config('promotion.requirements.' . $this->jabatan_fungsional_tujuan, []));
-        $uploadedDocs = $this->documents()->pluck('nama_dokumen');
+        // Ambil ID dari semua persyaratan yang WAJIB untuk jabatan fungsional tujuan
+        $requiredRequirementIds = PromotionRequirement::where('jabatan_fungsional', $this->jabatan_fungsional_tujuan)
+            ->where('is_wajib', true)
+            ->pluck('id');
 
-        // Cek apakah semua dokumen yang dibutuhkan sudah ada di koleksi dokumen yang diunggah
-        return $requiredDocs->diff($uploadedDocs)->isEmpty();
+        // Jika tidak ada persyaratan wajib, maka dianggap lengkap
+        if ($requiredRequirementIds->isEmpty()) {
+            return true;
+        }
+
+        // Ambil ID persyaratan dari dokumen yang sudah diunggah untuk submission ini
+        $uploadedRequirementIds = $this->documents()->pluck('promotion_requirement_id')->unique();
+
+        // Cek apakah semua ID persyaratan yang wajib sudah ada di dalam daftar yang diunggah
+        return $requiredRequirementIds->diff($uploadedRequirementIds)->isEmpty();
     }
 
     public function assessors()

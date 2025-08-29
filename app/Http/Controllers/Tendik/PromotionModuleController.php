@@ -27,7 +27,7 @@ class PromotionModuleController extends Controller
      */
     public function show(PromotionSubmission $submission)
     {
-         $submission->load('dosen.dosenDetail', 'documents', 'assessors', 'logs.processor');
+        $submission->load('dosen.dosenDetail', 'documents', 'assessors', 'logs.processor');
         
         // Data untuk form pemilihan asesor
         $assessors = User::role('asesor')->where('id', '!=', $submission->dosen_user_id)->get();

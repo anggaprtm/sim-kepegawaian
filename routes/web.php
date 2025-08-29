@@ -12,6 +12,7 @@ use App\Http\Controllers\Tendik\PakSessionController;
 use App\Http\Controllers\Tendik\BpfSessionController;
 use App\Http\Controllers\Tendik\FinalizationController;
 use App\Http\Controllers\Tendik\PromotionModuleController;
+use App\Http\Controllers\Admin\RequirementController;
 
 
 Route::get('/', function () {
@@ -38,6 +39,8 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
     Route::get('pengajuan/{submission}', [PromotionSubmissionController::class, 'show'])->name('promotion.show');
     Route::post('pengajuan/{submission}/upload', [PromotionSubmissionController::class, 'uploadDocument'])->name('promotion.upload');
     Route::post('pengajuan/{submission}/submit', [PromotionSubmissionController::class, 'submitForVerification'])->name('promotion.submit');
+    Route::delete('pengajuan/{submission}/document/{document}', [PromotionSubmissionController::class, 'deleteDocument'])->name('promotion.document.delete');
+    Route::get('pengajuan/{submission}/status', [PromotionSubmissionController::class, 'checkStatus'])->name('promotion.status');
 });
 
 Route::middleware(['auth', 'role:tendik'])->prefix('tendik')->name('tendik.')->group(function () {
@@ -69,6 +72,7 @@ Route::middleware(['auth', 'role:tendik'])->prefix('tendik')->name('tendik.')->g
 Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('dosen', DosenController::class);
     Route::resource('tendik', TendikController::class);
+    Route::resource('requirements', RequirementController::class)->except(['create', 'edit', 'show']);
 });
 
 

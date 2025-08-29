@@ -11,12 +11,17 @@ class SubmissionDocument extends Model
 
     protected $fillable = [
         'submission_id',
-        'nama_dokumen',
+        'promotion_requirement_id',
         'path_file',
     ];
 
     public function submission()
     {
         return $this->belongsTo(PromotionSubmission::class, 'submission_id');
+    }
+
+    public function requirement()
+    {
+        return $this->belongsTo(PromotionRequirement::class, 'promotion_requirement_id');
     }
 }

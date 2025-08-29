@@ -6,71 +6,79 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"
+             x-data="{
+                // Inisialisasi daftar ID persyaratan yang sudah diunggah
+                uploadedRequirementIds: {{ json_encode($submission->documents->pluck('promotion_requirement_id')->unique()->toArray()) }},
+                
+                // Konversi data persyaratan dari PHP ke array JavaScript
+                requirements: {{ json_encode($requirements) }},
+                
+                // Hitung ID persyaratan wajib
+                get mandatoryRequirementIds() {
+                    return this.requirements.filter(req => req.is_wajib).map(req => req.id);
+                },
+                
+                // Cek kelengkapan HANYA berdasarkan yang wajib
+                get isComplete() {
+                    if (this.mandatoryRequirementIds.length === 0) return true;
+                    return this.mandatoryRequirementIds.every(reqId => this.uploadedRequirementIds.includes(reqId));
+                },
+
+                // Fungsi untuk menangani event saat dokumen diunggah atau dihapus
+                handleDocumentChange(event) {
+                    const { requirementId, status, remaining } = event.detail;
+                    if (status === 'uploaded' && !this.uploadedRequirementIds.includes(requirementId)) {
+                        this.uploadedRequirementIds.push(requirementId);
+                    } else if (status === 'deleted' && remaining === 0) {
+                        this.uploadedRequirementIds = this.uploadedRequirementIds.filter(id => id !== requirementId);
+                    }
+                }
+             }"
+             @document-changed.window="handleDocumentChange($event)">
+            
             @include('dosen.promotion.partials.stepper')
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <!-- Card Checklist Dikembalikan -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Checklist Persyaratan Dokumen</h3>
-
-                    @if (session('success'))
-                        <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>
-                    @endif
-                    
-                    @if ($errors->any())
-                        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <ul class="space-y-4">
-                        @foreach($requirements as $req)
-                        @php
-                            $uploadedDoc = $submission->documents->firstWhere('nama_dokumen', $req);
-                        @endphp
-                        <li class="p-4 border rounded-md flex justify-between items-center">
-                            <div>
-                                <span class="font-semibold">{{ $req }}</span>
-                                @if($uploadedDoc)
-                                <div class="text-sm text-green-600">
-                                    <a href="{{ asset('storage/' . $uploadedDoc->path_file) }}" target="_blank" class="underline">Sudah diunggah. Lihat file.</a>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Ringkasan Checklist Persyaratan</h3>
+                    <ol class="list-decimal list-inside grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                        <template x-for="req in requirements" :key="req.id">
+                            <li>
+                                <div class="inline-flex items-center space-x-2">
+                                    <i class="fa-solid" :class="{
+                                        'fa-check-circle text-green-500': uploadedRequirementIds.includes(req.id),
+                                        'fa-times-circle text-red-500': !uploadedRequirementIds.includes(req.id) && req.is_wajib,
+                                        'fa-circle text-gray-400': !uploadedRequirementIds.includes(req.id) && !req.is_wajib
+                                    }"></i>
+                                    <span x-text="req.nama_dokumen"></span>
+                                    <span x-show="!req.is_wajib" class="text-xs text-gray-500">(Opsional)</span>
                                 </div>
-                                @else
-                                <div class="text-sm text-red-600">Belum diunggah</div>
-                                @endif
-                            </div>
-                            <form action="{{ route('dosen.promotion.upload', $submission->id) }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <input type="hidden" name="document_name" value="{{ $req }}">
-                                <input type="file" name="document_file" required class="text-sm">
-                                <x-primary-button class="ml-2">Upload</x-primary-button>
-                            </form>
-                        </li>
+                            </li>
+                        </template>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="p-6 text-gray-900">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Unggah Dokumen Persyaratan</h3>
+                    <div class="space-y-4">
+                        @foreach($requirements as $req)
+                            <x-multi-file-uploader :requirement="$req" :submission="$submission" :uploadedDocuments="$submission->documents->where('promotion_requirement_id', $req->id)" />
                         @endforeach
-                    </ul>
+                    </div>
 
                     <div class="mt-6 border-t pt-4">
-                        @if($submission->areDocumentsComplete() && $submission->status == 'pengajuan_dibuat')
-                            <form action="{{ route('dosen.promotion.submit', $submission->id) }}" method="POST">
-                                @csrf
-                                <x-primary-button>
-                                    Ajukan Verifikasi
-                                </x-primary-button>
-                            </form>
-                        @else
-                            <x-primary-button disabled>Ajukan Verifikasi</x-primary-button>
-                            <p class="text-sm text-gray-500 mt-2">
-                                @if($submission->status != 'pengajuan_dibuat')
-                                    Pengajuan sudah dalam proses verifikasi atau tahap selanjutnya.
-                                @else
-                                    Tombol "Ajukan Verifikasi" akan aktif jika semua dokumen persyaratan sudah lengkap diunggah.
-                                @endif
-                            </p>
-                        @endif
+                        <form action="{{ route('dosen.promotion.submit', $submission->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" 
+                                    x-bind:disabled="!isComplete || '{{ $submission->status }}' !== 'pengajuan_dibuat'"
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                Kumpulkan Berkas & Ajukan Verifikasi
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
