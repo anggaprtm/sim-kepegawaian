@@ -70,11 +70,14 @@ class PromotionSubmissionController extends Controller
     {
         abort_if($submission->dosen_user_id !== Auth::id(), 403);
         
-        // Mengambil persyaratan dari database
         $requirements = PromotionRequirement::where('jabatan_fungsional', $submission->jabatan_fungsional_tujuan)->get();
         
-        $submission->load('documents', 'logs.processor');
-        return view('dosen.promotion.show', compact('submission', 'requirements'));
+        // Kelompokkan dokumen yang ada berdasarkan ID persyaratannya untuk memudahkan akses di view
+        $documentsByRequirement = $submission->documents->groupBy('promotion_requirement_id');
+        
+        $submission->load('logs.processor');
+
+        return view('dosen.promotion.show', compact('submission', 'requirements', 'documentsByRequirement'));
     }
 
     public function uploadDocument(Request $request, PromotionSubmission $submission)
