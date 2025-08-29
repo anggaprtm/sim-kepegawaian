@@ -4,15 +4,29 @@
         <h4 class="font-semibold mb-2">Checklist Dokumen Persyaratan</h4>
         <ul class="space-y-3 border rounded-md p-4">
             @foreach($requirements as $req)
-            @php $doc = $submission->documents->firstWhere('nama_dokumen', $req); @endphp
-            <li class="flex justify-between items-center">
-                <span>{{ $req }}</span>
-                @if($doc)
-                <a href="{{ asset('storage/' . $doc->path_file) }}" target="_blank" class="text-sm text-blue-500 underline">Lihat File</a>
-                @else
-                <span class="text-sm text-red-500">Belum Diunggah</span>
-                @endif
-            </li>
+                @php
+                    // Cek apakah ada dokumen yang terunggah untuk persyaratan ini
+                    $uploadedDocs = $submission->documents->where('promotion_requirement_id', $req->id);
+                @endphp
+                <li class="flex justify-between items-center py-2 border-b last:border-b-0">
+                    <div>
+                        <p>{{ $req->nama_dokumen }} <span class="text-sm {{ $req->is_wajib ? 'text-red-500' : 'text-green-500' }}">({{ $req->is_wajib ? 'Wajib' : 'Opsional' }})</span></p>
+                        @if($uploadedDocs->isNotEmpty())
+                            @foreach($uploadedDocs as $doc)
+                                <a href="{{ asset('storage/' . $doc->path_file) }}" target="_blank" class="text-xs text-blue-500 underline block ml-4">
+                                    <i class="fa-solid fa-file-pdf"></i> {{ basename($doc->path_file) }}
+                                </a>
+                            @endforeach
+                        @else
+                            <p class="text-xs text-gray-500 ml-4">Belum diunggah</p>
+                        @endif
+                    </div>
+                    @if($uploadedDocs->isNotEmpty())
+                        <i class="fa-solid fa-check-circle text-green-500 text-lg"></i>
+                    @else
+                        <i class="fa-solid fa-times-circle text-red-500 text-lg"></i>
+                    @endif
+                </li>
             @endforeach
         </ul>
     </div>
