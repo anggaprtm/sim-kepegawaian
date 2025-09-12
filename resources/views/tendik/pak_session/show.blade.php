@@ -34,9 +34,10 @@
                         </div>
 
                         @if($session->status == 'dijadwalkan')
-                        <div>
+                        <div class="mt-4">
                             <x-input-label for="notula" value="Notula Sidang" />
-                            <textarea name="notula" id="notula" rows="5" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></textarea>
+                            {{-- SUDAH DIPERBAIKI --}}
+                            <textarea name="notula" id="notula" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>{{ old('notula', $session->notula ?? '') }}</textarea>
                         </div>
                         <div class="flex items-center justify-end mt-4">
                             <x-primary-button>Simpan Hasil Sidang</x-primary-button>
@@ -52,4 +53,25 @@
             </div>
         </div>
     </div>
+    
+    @if ($session->status != 'Selesai')
+    <script>
+        $(document).ready(function() {
+            $('#notula').summernote({
+                placeholder: 'Tulis notula sidang di sini...',
+                tabsize: 2,
+                height: 150,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ]
+            });
+        });
+    </script>
+@endif
 </x-app-layout>
