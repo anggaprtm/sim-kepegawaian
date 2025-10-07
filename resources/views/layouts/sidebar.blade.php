@@ -80,6 +80,10 @@
                         <span x-show="!isSidebarMinimized" class="mx-3">Finalisasi & SK</span>
                     </x-nav-link>
                 </div>
+                    <x-nav-link :href="route('tendik.surat_tugas.index')" :active="request()->routeIs('tendik.surat_tugas.*')">
+                        <x-slot name="icon"><i class="fa-solid fa-file-alt fa-fw fa-lg"></i></x-slot>
+                        <span x-show="!isSidebarMinimized" class="mx-3">Surat Tugas</span>
+                    </x-nav-link>
             </div>
         @endrole
     </nav>

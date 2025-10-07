@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "select2/dist/css/select2.min.css";
+
 /* Fix Summernote list styling issue with Tailwind CSS */
 .note-editable ul {
   list-style: disc !important;

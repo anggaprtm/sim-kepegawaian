@@ -65,6 +65,11 @@ Route::middleware(['auth', 'role:tendik'])->prefix('tendik')->name('tendik.')->g
     Route::get('finalisasi', [FinalizationController::class, 'index'])->name('finalization.index');
     Route::post('finalisasi/generate-letter', [FinalizationController::class, 'generateUniversityCoverLetter'])->name('finalization.generate_letter');
     Route::post('finalisasi/{submission}/process', [FinalizationController::class, 'processFinalResult'])->name('finalization.process');
+
+    Route::get('surat-tugas', [\App\Http\Controllers\Tendik\SuratTugasController::class, 'index'])->name('surat_tugas.index');
+    Route::get('surat-tugas/create', [\App\Http\Controllers\Tendik\SuratTugasController::class, 'create'])->name('surat_tugas.create');
+    Route::post('surat-tugas', [\App\Http\Controllers\Tendik\SuratTugasController::class, 'store'])->name('surat_tugas.store');
+    Route::get('surat-tugas/{suratTugas}/download', [\App\Http\Controllers\Tendik\SuratTugasController::class, 'download'])->name('surat_tugas.download');
 });
 
 
